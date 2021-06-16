@@ -7,10 +7,6 @@ exports.createThing = (req, res, next) => {
   const thing = new Thing({
     ...thingObject,
     imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
-    /* likes : 0,
-    dislikes : 0,
-    usersLiked : [],
-    usersDisliked : []  */
   });
   thing.save()
     .then(() => res.status(201).json({ message: 'Objet enregistré !'}))
@@ -22,7 +18,19 @@ exports.modifyThing = (req, res, next) => {
     {
       ...JSON.parse(req.body.sauce),
       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-    } : { ...req.body };
+    }: { ...req.body };
+
+  //delete old image if changing image
+    if(req.file !== undefined){
+      Thing.findOne({ _id: req.params.id })
+      .then(thing => {
+        const filename = thing.imageUrl.split('/images/')[1];
+        fs.unlink(`images/${filename}`, () => {
+          console.log("L'image d'origine a bien été supprimée");                                
+        })})
+      .catch(error => res.status(500).json({ error }));
+    };
+
   Thing.updateOne({ _id: req.params.id }, { ...thingObject, _id: req.params.id })
     .then(() => res.status(200).json({ message: 'Objet modifié !'}))
     .catch(error => res.status(400).json({ error }));
@@ -55,7 +63,6 @@ exports.getAllThings = (req, res, next) => {
 
 
 exports.likeOrDislikeSauce = async(req, res, next)=>{
-    try {
       const userId = req.body.userId;
       const likes = req.body.like;
       const id = req.params.id;
@@ -63,55 +70,43 @@ exports.likeOrDislikeSauce = async(req, res, next)=>{
       
       switch (likes) {
         case 1: // case if like=1
-          try {
-            
+          
             if (!sauce.usersLiked.includes(userId)) {//check if user is already in usersLiked array
               await Thing.findByIdAndUpdate(id, { $inc: {likes: 1}, $push: {usersLiked: userId}}) // incremente like and push user in  []usersLiked
-              res.status(201).json({ message: 'vous avez aimé cette sauce !'})    
-          }}catch (error) {
-            res.status(400).json({ error })
+              .then(() => res.status(201).json({ message: 'vous avez aimé cette sauce !'}))
+              .catch(error => res.status(400).json({ error }));    
           }  
         break;
   
         case 0: // case if like =0
-          try {
-                    
+             
             if (sauce.usersLiked.includes(userId)){ // if user is already in userLiked , decremente like and pull user from array
               await Thing.findByIdAndUpdate(id, { $inc: {likes: -1}, $pull: {usersLiked: userId}})
-              res.status(201).json({ message: 'Like retiré !'})
+              .then(() => res.status(201).json({ message: 'Like retiré !'}))
+              .catch(error => res.status(400).json({ error }));  
               break;
+
             } else if (sauce.usersDisliked.includes(userId)){  //  if user is already in userDisliked , decremente dislike and pull user from array
           
               await Thing.findByIdAndUpdate(id, { $inc: {dislikes: -1}, $pull: {usersDisliked: userId}})
-              res.status(201).json({ message: 'Dislike retiré !'})
+              .then(() => res.status(201).json({ message: 'Dislike retiré !'}))
+              .catch(error => res.status(400).json({ error }));  
             }
-            
-          } catch (error) {
-            res.status(400).json({ error })
-          }
-          
-          break;
+       
+        break;
   
         case -1: //case if like =-1
-          try {
-            
+
             if (!sauce.usersDisliked.includes(userId)){ // check if user is already in []usersDisliked
              await Thing.findByIdAndUpdate(id, { $inc: {dislikes: 1}, $push: {usersDisliked: userId}}) //incremente dislike and push user in []usersDisliked
-              res.status(201).json({ message: "Vous n'avez pas aimé cette sauce !"})
-            
+             .then(() => res.status(201).json({ message: "Vous n'avez pas aimé cette sauce !"}))
+             .catch(error => res.status(400).json({ error }));  
             }
-            
-          } catch (error) {
-            res.status(400).json({ error })          
-          }     
-          break;
+
+        break;
   
         default: break;
       }
-    
-    } catch (error) {
-      res.status(400).json({ error });    
-    };
 };
 
 
