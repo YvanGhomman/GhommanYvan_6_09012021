@@ -9,4 +9,15 @@ Sur Windows, ces installations nécessitent d'utiliser PowerShell en tant qu'adm
 
 ## Development server
 
-Démarrer ng serve pour avoir accès au serveur de développement. Rendez-vous sur http://localhost:4200/. L'application va se recharger automatiquement si vous modifiez un fichier source.
+Veuillez cloner ce dépôt github sur votre ordinateur, puis sur votre terminal faîtes 'npm install sass'.
+
+Veuillez ensuite coller le fichier .env dans le dossier.
+
+Sur le terminal, tapez 'npm install -g nodemon'.
+
+Scindez votre terminal :
+
+    - Sur l'un tapez 'nodemon server'
+    - Sur l'autre 'ng serve' 
+
+Rendez-vous sur http://localhost:4200/
