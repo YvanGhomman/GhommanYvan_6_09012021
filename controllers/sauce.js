@@ -20,7 +20,7 @@ exports.modifyThing = (req, res, next) => {
       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     }: { ...req.body };
 
-  //delete old image if changing image
+  //supprime l'ancienne image lors de l'ajout d'une nouvelle
     if(req.file !== undefined){
       Thing.findOne({ _id: req.params.id })
       .then(thing => {
@@ -69,24 +69,24 @@ exports.likeOrDislikeSauce = async(req, res, next)=>{
       const sauce = await Thing.findOne({ _id: req.params.id });
       
       switch (likes) {
-        case 1: // case if like=1
+        case 1: // cas si like =1
           
-            if (!sauce.usersLiked.includes(userId)) {//check if user is already in usersLiked array
-              await Thing.findByIdAndUpdate(id, { $inc: {likes: 1}, $push: {usersLiked: userId}}) // incremente like and push user in  []usersLiked
+            if (!sauce.usersLiked.includes(userId)) {//Si user n'est pas dans le tableau usersLiked
+              await Thing.findByIdAndUpdate(id, { $inc: {likes: 1}, $push: {usersLiked: userId}}) // on ajoute un like et on push le user dans le tableau usersLiked
               .then(() => res.status(201).json({ message: 'vous avez aimé cette sauce !'}))
               .catch(error => res.status(400).json({ error }));    
           }  
         break;
   
-        case 0: // case if like =0
+        case 0: // cas si like =0
              
-            if (sauce.usersLiked.includes(userId)){ // if user is already in userLiked , decremente like and pull user from array
+            if (sauce.usersLiked.includes(userId)){ //Si user est dans le tableau userLiked , on enleve un like et on pull le user du tableau 
               await Thing.findByIdAndUpdate(id, { $inc: {likes: -1}, $pull: {usersLiked: userId}})
               .then(() => res.status(201).json({ message: 'Like retiré !'}))
               .catch(error => res.status(400).json({ error }));  
               break;
 
-            } else if (sauce.usersDisliked.includes(userId)){  //  if user is already in userDisliked , decremente dislike and pull user from array
+            } else if (sauce.usersDisliked.includes(userId)){  //Si user est dans le tableau userDisliked , on enleve un dislike et on pull le user du tableau 
           
               await Thing.findByIdAndUpdate(id, { $inc: {dislikes: -1}, $pull: {usersDisliked: userId}})
               .then(() => res.status(201).json({ message: 'Dislike retiré !'}))
@@ -95,10 +95,10 @@ exports.likeOrDislikeSauce = async(req, res, next)=>{
        
         break;
   
-        case -1: //case if like =-1
+        case -1: //cas si like =-1
 
-            if (!sauce.usersDisliked.includes(userId)){ // check if user is already in []usersDisliked
-             await Thing.findByIdAndUpdate(id, { $inc: {dislikes: 1}, $push: {usersDisliked: userId}}) //incremente dislike and push user in []usersDisliked
+            if (!sauce.usersDisliked.includes(userId)){ //Si user n'est pas dans le tableau usersDisliked
+             await Thing.findByIdAndUpdate(id, { $inc: {dislikes: 1}, $push: {usersDisliked: userId}}) //on ajoute un dislike et on push le user dans le tableau usersDisliked
              .then(() => res.status(201).json({ message: "Vous n'avez pas aimé cette sauce !"}))
              .catch(error => res.status(400).json({ error }));  
             }

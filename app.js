@@ -7,7 +7,7 @@ const helmet = require('helmet');
 require('dotenv').config();
 
 
-const stuffRoutes = require('./routes/stuff');
+const sauceRoutes = require('./routes/sauce');
 const userRoutes = require('./routes/user');
 
 mongoose.connect( process.env.DB_URL,
@@ -31,7 +31,7 @@ app.use(bodyParser.json());
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
-app.use('/api/sauces', stuffRoutes);
+app.use('/api/sauces', sauceRoutes);
 app.use('/api/auth', userRoutes);
 
 
