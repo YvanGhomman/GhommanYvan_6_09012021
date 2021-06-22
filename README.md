@@ -7,7 +7,7 @@ Pour faire fonctionner le projet, vous devez installer :
 
 Sur Windows, ces installations nécessitent d'utiliser PowerShell en tant qu'administrateur.
 
-## Development server
+## Pour accéder au site
 
 Veuillez cloner ce dépôt github sur votre ordinateur, puis sur votre terminal faîtes 'npm install sass'.
 
