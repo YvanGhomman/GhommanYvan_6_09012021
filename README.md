@@ -11,7 +11,7 @@ Sur Windows, ces installations nécessitent d'utiliser PowerShell en tant qu'adm
 
 Veuillez cloner ce dépôt github sur votre ordinateur, puis sur votre terminal faîtes 'npm install sass' et 'npm install dotenv'.
 
-Veuillez ensuite coller le fichier .env dans le projet.
+Veuillez ensuite coller le fichier .env dans le projet (si vous ne l'avez pas à votre disposition, veuillez me contacter).
 
 Sur le terminal, tapez 'npm install -g nodemon'.
 
